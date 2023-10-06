@@ -16,6 +16,7 @@ exports.deleteLocalFiles = exports.filterImageFromURL = void 0;
 const fs_1 = __importDefault(require("fs"));
 // import Jimp = require('jimp');
 const jimp_1 = __importDefault(require("jimp"));
+const axios_1 = __importDefault(require("axios"));
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
 // returns the absolute path to the local image
@@ -25,17 +26,25 @@ const jimp_1 = __importDefault(require("jimp"));
 //    an absolute path to a filtered image locally saved file
 function filterImageFromURL(inputURL) {
     return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-            const photo = yield jimp_1.default.read(inputURL);
-            const outpath = '/tmp/filtered.' + Math.floor(Math.random() * 2000) + '.jpg';
-            yield photo
+        try {
+            const { data: imageBuffer } = yield (0, axios_1.default)({
+                method: 'get',
+                url: inputURL,
+                responseType: 'arraybuffer'
+            });
+            const photo = yield jimp_1.default.read(imageBuffer);
+            const outpath = `/tmp/filtered.${Math.floor(Math.random() * 2000)}.jpg`;
+            const path = __dirname + outpath;
+            const photoResult = yield photo
                 .resize(256, 256) // resize
                 .quality(60) // set JPEG quality
                 .greyscale() // set greyscale
-                .write(__dirname + outpath, (img) => {
-                resolve(__dirname + outpath);
-            });
-        }));
+                .writeAsync(path);
+            return path;
+        }
+        catch (error) {
+            throw new Error("Filter Image Error!");
+        }
     });
 }
 exports.filterImageFromURL = filterImageFromURL;

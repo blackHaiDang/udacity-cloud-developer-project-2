@@ -9,4 +9,5 @@ Process:
 5. eb create (choose suitable options)
 6. eb deploy
 
-URL (elastic beanstalk): http://project2-udacity-cloud-developer-dev5.us-east-1.elasticbeanstalk.com/
+URL (elastic beanstalk): 
+http://project2-udacity-cloud-developer-dev.us-east-1.elasticbeanstalk.com/
